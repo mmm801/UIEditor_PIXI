@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<!-- 12345671 manifest="tripTown.manifest" -->
+
+<head>
+<meta charset="utf-8" />
+
+	<style>
+		html,body{
+			height:100%;
+			margin: 0;
+		}
+		
+		#left{
+			float:left;
+			width:200px;
+			height:100%;
+			background-color: #00ff00;
+		}
+		#main{
+			margin-left: 200px;
+			margin-right: 200px;
+			height:600px;
+			overflow: scroll;
+			background-color: #999999;
+			overflow: hidden;
+		}
+		#right{
+
+			width:200px;
+			background-color: #00ff00;
+			float: right;
+			height:100%;
+			overflow: scroll;
+		}
+		#elmDiv{
+			background-color: #e7e7e7;
+			padding:20px;
+
+		}
+		#elmDiv div{
+			margin:10px;
+		}
+
+		#navigate{
+			height:30px;
+		}
+
+	</style>
+
+	
+	<script src="baseJS/pixi.min.js"></script>
+	<script src="baseJS/jscolor.js"></script>
+	<script src="bin/UIEditor.min.js"></script>
+</head>
+<body >
+	<div id="left">
+		<div>
+			<div><input type="file" id="fileRes" onchange="UIProject.getInstance().loadRes();"/></div>
+
+			<div><button onclick="UIProject.getInstance().save();">保存</button></div>
+			<div><input type="file" id="fileProject" onchange="UIProject.getInstance().load();"/></div>
+			<div>
+				<select id="zoom" onChange="UIProject.getInstance().currentEditor.setZoom(this.value)">
+					<option value="50">50%</option>
+					<option value="100" selected>100%</option>
+					<option value="150">150%</option>
+					<option value="200">200%</option>
+				</select>
+
+
+				显示裁剪:<input type="checkbox" id="mask" onchange="UIProject.getInstance().currentEditor.setMask(this.checked);"/>
+			</div>
+
+		</div>
+		<div id="elmDiv">
+			<div><button onclick="UIProject.getInstance().currentEditor.addShape();">形状</button></div>
+			<div><button onclick="UIProject.getInstance().currentEditor.addPic();">图片</button></div>
+			<div><button onclick="UIProject.getInstance().currentEditor.addText();">文本</button></div>
+			<div><button onclick="UIProject.getInstance().currentEditor.addUI();">UI</button></div>
+			<div><button onclick="UIProject.getInstance().currentEditor.addSlice9();">九宫</button></div>
+			<!--
+			<div><button onclick="UIProject.getInstance().currentEditor.addButton();">按钮</button></div>
+
+			<div><button onclick="UIProject.getInstance().currentEditor.addSheetAnimate();">纹理动画</button></div>
+			-->
+
+		</div>
+
+		<div id="projectDiv">fdsa</div>
+	</div>
+	<div id="right">
+		<div><a href='javascript:changeDisplay("fileProperty");'>文件属性</a></div>
+		<div id="fileProperty" style="display:none">111</div>
+		<div><a href='javascript:changeDisplay("elmProperty");'>元件属性</a></div>
+		<div id="elmProperty" style="display:none">222</div>
+		<div><a href='javascript:changeDisplay("frameProperty");'>帧属性</a></div>
+        <div id="frameProperty" style="display:none">333</div>
+	</div>
+	
+	
+	<div id="main">
+		<div id ="navigate">123</div>
+		<div id="c1"></div>
+
+
+	</div>
+	
+	
+	<script>
+		//PIXI.settings.RENDER_OPTIONS.resolution = window.devicePixelRatio;
+		//PIXI.settings.RENDER_OPTIONS.autoResize = true;
+
+
+
+		document.getElementById("navigate").style.width=50+"px";
+
+		document.getElementById("main").style.width=document.body.clientWidth-400+"px";
+		document.getElementById("main").style.height=document.body.clientHeight+"px";
+
+		UIProject.getInstance().initDiv("projectDiv");
+		UIProject.getInstance().currentEditor.initStage("c1",document.body.clientWidth-400,document.body.clientHeight);
+
+
+		var url = getQueryString("data");
+		if(url!=null){
+			UIProject.getInstance().initWithData(url);
+		}
+
+
+		function changeDisplay(divName){
+			var obj = document.getElementById(divName);
+			if(obj.style.display=='none'){
+				obj.style.display='block';
+			}else{
+				obj.style.display='none';
+			}
+		}
+
+		function getQueryString(name) {
+			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+			var r = window.location.search.substr(1).match(reg);
+			if (r != null) return unescape(r[2]); return null;
+		}
+
+		/*
+		var app =new PIXI.Application(500,500);
+		document.getElementById("c1").appendChild(app.view);
+
+		var shape = new PIXI.Graphics();
+		shape.beginFill(0xff0000,1);
+		shape.drawRect(0,0,200,100);
+		shape.endFill();
+
+		var ttt = new PIXI.Container();
+		ttt.addChild(shape);
+		ttt.pivot = new PIXI.Point(100,50);
+
+		//shape.scale = new PIXI.Point(2,2);
+
+		//shape.rotation = Math.PI/2;
+
+		ttt.x = 200;
+		ttt.y = 200;
+		app.stage.addChild(ttt);
+		var rotation = 0;
+
+		var scale = 1;
+
+		document.body.addEventListener("click", function(){;
+			rotation+=Math.PI/10;
+			scale+=0.1;
+			ttt.rotation = rotation;
+			ttt.scale = new PIXI.Point(scale,scale);
+		});
+		*/
+		</script>
+</body>
+</html>

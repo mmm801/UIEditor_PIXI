@@ -1,0 +1,1 @@
+UIEditor是基于PIXI开发的一款界面动画编辑器，设计思路和IOS开发工具SpriteBuilder（前身是cocosBuilder）相似，可以简单为HTML5生成界面和动画。目前仅支持PIXI引擎

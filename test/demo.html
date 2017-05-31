@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<!-- 12345671 manifest="tripTown.manifest" -->
+
+<head>
+<meta charset="utf-8" />
+
+	<style>
+		html,body{
+			height:100%;
+			margin: 0;
+		}
+
+	</style>
+	<script src="../baseJS/pixi.min.js"></script>
+	<script src="../bin/UIEditor.min.js"></script>
+
+	<script src="js/codemirror.js" ></script>
+	<script src="js/javascript.js" ></script>
+
+
+	<script src="js/active-line.js" ></script>
+	<link rel="stylesheet" media="screen" type="text/css" href="css/codemirror.css">
+	<link rel="stylesheet" media="screen" type="text/css" href="css/app.css">
+
+</head>
+<body>
+<div>
+<a href="../index.html?data=test/project.json" target="_blank">project.json</a>
+</div>
+<div style="width:600px;float:left" >
+	<textarea id='sourcetest'>
+var app =new PIXI.Application(500,500);
+document.body.appendChild(app.view);
+UIManager.getInstance().loadURL("project.json",onAssetLoad,app);
+
+function onAssetLoad(data){
+	Director.getInstance().changeScene(app,"scene1");
+}
+
+function StartScene(uiFile){
+	UIBase.call(this,uiFile);
+	var ui = uiFile.getElmByName("ui");
+	var uiAnimate = ui.uiFile.getAnimate("go");
+	var test = uiFile.getAnimate("test");
+	this.onEnter = function(){
+		test.play(1);
+		uiAnimate.play(1);
+
+	}
+}
+		
+function GameItem(uiFile){
+	UIBase.call(this,uiFile);
+}
+
+	</textarea>
+</div>
+<div id="main" style="margin-left: 600px">
+
+</div>
+<div><button onclick="postCode();">提交</button></div>
+
+
+</body>
+<script>
+
+
+	testEditor = CodeMirror.fromTextArea(document.getElementById("sourcetest"), {
+		mode: "javascript",
+		lineNumbers: true,
+		lineWrapping: true,
+		styleActiveLine: true
+	});
+
+
+	var previewFrame=document.createElement("iframe");
+	document.getElementById("main").appendChild(previewFrame);
+
+
+	function postCode(){
+
+		var Content = "<!DOCTYPE html>\n"
+		Content+="<html>\n";
+		Content+="<script src='../baseJS/pixi.min.js'><\/script>"
+		Content+="<script src='../bin/UIEditor.min.js'><\/script>"
+
+		Content+="<body>\n";
+		Content+="</body>\n";
+		Content+="<script>\n";
+		Content+=testEditor.getValue();
+		Content+="\n";
+		Content+="<\/script>\n";
+		Content+="<\/html>\n";
+
+		previewFrame.setAttribute("srcdoc",Content);
+
+
+		previewFrame.onload = function(){
+
+			previewFrame.width = previewFrame.contentWindow.document.body.scrollWidth;
+			previewFrame.height = previewFrame.contentWindow.document.body.scrollHeight;
+		}
+	}
+	postCode();
+	/*
+	var app =new PIXI.Application(500,500);
+	document.getElementById("main").appendChild(app.view);
+
+	var startScene=null;
+	var gameScene=null;
+
+	UIManager.getInstance().loadURL("project.json",onAssetLoad,app);
+		
+	function onAssetLoad(data){
+		Director.getInstance().changeScene(app,UIManager.getInstance().uiPool["scene1"]);
+	}
+	
+	
+	function StartScene(uiFile){
+		UIBase.call(this,uiFile);
+		
+		var frame=0;
+		var btn = uiFile.getBtnByName("startBtn");
+		document.addEventListener("click",function(event){
+//			Director.changeScene(app,StaticUIManager.uiPool["gameScene"]);
+			
+			uiAnimate.setFrameSet(frame);
+			test.setFrameSet(frame);
+			frame++;
+			
+		});
+		var ui = uiFile.getElmByName("ui");
+		var uiAnimate = ui.uiFile.getAnimate("go");
+		var test = uiFile.getAnimate("test");
+
+		
+		this.onEnter = function(){
+			
+			test.play(1);
+			uiAnimate.play(1);
+			
+		}
+
+	}
+	
+	function GameScene(uiFile){
+		UIBase.call(this,uiFile);
+		
+		var count = 0;
+		var score = 0;
+		
+		var btn = uiFile.getBtnByName("back");
+		var txt = uiFile.getBtnByName("text");
+		txt.text = title;
+		
+		btn.on("click",function(event){
+			Director.getInstance().changeScene(app,UIManager.getInstance().uiPool["scene1"]);
+		});
+		
+		var list = [];
+		for(var i=0;i<9;i++){
+			var ui = UIManager.getInstance().createUIByName("item");
+			list.push(ui);
+			var xx = i%3;
+			var yy = Math.floor(i/3);
+			ui.content.x = xx*150+100;
+			ui.content.y = yy*100+100;
+			
+			
+			var txt = ui.uiFile.getBtnByName("text");
+			txt.text = contentList[i].label;
+			ui.value = contentList[i].value;
+			
+			this.content.addChild(ui.content);	
+		}
+		
+		function resAnimateOver(userData){
+			count++;
+			if(count==3){
+				Director.getInstance().changeScene(app,UIManager.getInstance().uiPool["finalScene"]);
+				Director.getInstance().postMsg("postScore",score);
+			}
+		}
+		function animateOver(userData){
+			var ui = null;
+			if(userData.value==0){
+				ui = UIManager.getInstance().createUIByName("loseRes");
+			}else{
+				ui = UIManager.getInstance().createUIByName("winRes");
+				score++;
+			}
+			
+			var uiAnimate = ui.getAnimate("default_once");
+			uiAnimate.autoRemove = true;
+			
+			uiAnimate.completeFun = resAnimateOver;
+			this.content.addChild(ui.content);
+			ui.content.x = 300;
+			ui.content.y = 300;
+			uiAnimate.play(1);
+			
+		}
+		
+		this.onEnter = function(){
+			count = 0;
+			score = 0;
+		}
+		
+		Director.getInstance().addObserver(this,"animateOver",animateOver);
+	}
+	
+	function GameItem(uiFile){
+		UIBase.call(this,uiFile);
+
+		
+		var uiAnimate = uiFile.getAnimate("go");
+
+
+		
+		this.content.buttonMode = true;
+
+		this.content.interactive = true;
+		
+		this.value = 0;
+		
+		
+		uiAnimate.completeFun=animateOver;
+		uiAnimate.userData = this;
+		
+		function animateOver(userData){
+			Director.getInstance().postMsg("animateOver",userData);
+		}
+		
+		this.content.on("click",function(event){
+			uiAnimate.play(1);
+		});
+		
+		
+	}
+	
+	function FinalScene(uiFile){
+		UIBase.call(this,uiFile);
+		var btn = uiFile.getBtnByName("back");
+		
+		btn.on("click",function(event){
+			Director.getInstance().changeScene(app,UIManager.getInstance().uiPool["scene1"]);
+		});
+		
+		function postScore(score){
+			var txt = uiFile.getElmByName("text");
+			txt.text = "得分:"+score;
+			console.log(txt);
+		}
+		Director.getInstance().addObserver(this,"postScore",postScore);
+	}
+	*/
+
+</script>
+
+
+</html>
